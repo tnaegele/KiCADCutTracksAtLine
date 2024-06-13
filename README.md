@@ -1,7 +1,7 @@
 # CutTracksAtLine KiCAD plugin
 "CutTracksAtLine" is a KiCAD pcbnew plugin that cuts all selected tracks at their intersection with a line object within the same selection. The plugin is layer agnostic, i.e. tracks from multiple layers can be cut simultaneously using a line placed on any layer.
 
-I wrote this plugin when I wanted to change the length of a flex cable / PCB but was unable to do so without doing a major redesign.
+I wrote this plugin when I wanted to change the length of a flex cable / flex PCB but was unable to do so without doing a major redesign.
 
 ## Usage
 1. Select all tracks you want to cut and a single line object which intersects the tracks.
