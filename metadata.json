@@ -1,0 +1,39 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "Cut tracks at line",
+    "description": "Cuts all selected tracks at an intersecting line",
+    "description_full": "Cuts all selected tracks at an intersecting line",
+    "identifier": "com.github.tnaegele.kicad-cut-tracks-at-line",
+    "type": "plugin",
+    "author": {
+        "name": "Tobias Naegele",
+        "contact": {
+            "web": "tobiasnaegele.com",
+            "github": "https://github.com/tnaegele"
+        }
+    },
+    "maintainer": {
+        "name": "Tobias Naegele",
+        "contact": {
+            "web": "tobiasnaegele.com",
+            "github": "https://github.com/tnaegele"
+        }
+    },
+    "license": "Apache",
+    "resources": {
+        "homepage": "https://github.com/tnaegele/KiCADCutTracksAtLine"
+    },
+    "tags": [
+        "tracks",
+        "cut",
+        "efficiency"
+    ],
+    "versions": [
+        {
+            "version": "1.0.0",
+            "status": "stable",
+            "kicad_version": "8.0",
+            "download_url": "https://github.com/tnaegele/KiCADCutTracksAtLine/releases/download/v1.0.0/kicad-package.zip"
+        }
+    ]
+}
