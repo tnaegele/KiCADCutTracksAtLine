@@ -60,7 +60,7 @@ class CutTracksAtLine(pcbnew.ActionPlugin):
             dlg = wx.MessageDialog(None, "Please select exactly one cutting line!", "Cutting line error", wx.OK | wx.ICON_ERROR)
             dlg.ShowModal()
             dlg.Destroy()
-            return 0
+            return
 
         # Get the cutting line
         line = selected_lines[0]
