@@ -55,43 +55,51 @@ class CutTracksAtLine(pcbnew.ActionPlugin):
                     if type(line).__name__ == 'PCB_SHAPE'
                 ]
 
-        # check if there is exactly one cutting line selected
-        if len(selected_lines) != 1:
-            dlg = wx.MessageDialog(None, "Please select exactly one cutting line!", "Cutting line error", wx.OK | wx.ICON_ERROR)
+        if (len(selected_tracks) == 0) or (len(selected_lines) == 0):
+            dlg = wx.MessageDialog(None, 'Please select at least one track and one line.', 'CutTracksAtLine plugin', wx.OK | wx.ICON_ERROR)
             dlg.ShowModal()
             dlg.Destroy()
             return
 
-        # Get the cutting line
-        line = selected_lines[0]
-        # Get the start and end points of the cutting line
-        line_start = (line.GetStart()[0], line.GetStart()[1])
-        line_end = (line.GetEnd()[0], line.GetEnd()[1])
-        cutting_line = (line_start, line_end)
+        cut_count = 0 # count the number of cuts made
 
+        for line in selected_lines:
+            # Get the start and end points of the cutting line
+            line_start = (line.GetStart()[0], line.GetStart()[1])
+            line_end = (line.GetEnd()[0], line.GetEnd()[1])
+            cutting_line = (line_start, line_end)
 
-        for track in selected_tracks:
-            # Get the start and end points of the track
-            track_start = pcbnew.VECTOR2I(int(track.GetStart()[0]), int(track.GetStart()[1]))
-            track_end = pcbnew.VECTOR2I(int(track.GetEnd()[0]), int(track.GetEnd()[1]))
-            track_line = (track_start, track_end)
+            new_track_list = [] # list to store the new tracks created by cutting the original tracks
 
-            # Check if the track intersects with the line and get the intersection point
-            does_intersect, intersection_x, intersection_y = self.line_intersection(cutting_line, track_line)
-            if does_intersect:  
-                intersection = pcbnew.VECTOR2I(int(intersection_x), int(intersection_y))
+            for track in selected_tracks:
+                # Get the start and end points of the track
+                track_start = pcbnew.VECTOR2I(int(track.GetStart()[0]), int(track.GetStart()[1]))
+                track_end = pcbnew.VECTOR2I(int(track.GetEnd()[0]), int(track.GetEnd()[1]))
+                track_line = (track_start, track_end)
 
-                # Cut the track at the intersection point
-                track.SetEnd(intersection)
+                # Check if the track intersects with the line and get the intersection point
+                does_intersect, intersection_x, intersection_y = self.line_intersection(cutting_line, track_line)
+                if does_intersect:  
+                    intersection = pcbnew.VECTOR2I(int(intersection_x), int(intersection_y))
 
-                # Create a new track from the intersection point to the original end point
-                new_track = pcbnew.PCB_TRACK(track) # copy the original track
-                new_track.SetStart(intersection)
-                new_track.SetEnd(track_end)
-                new_track.SetWidth(track.GetWidth()) # set the width of the new track to the width of the original track
-                new_track.SetLayer(track.GetLayer()) # set the layer of the new track to the layer of the original track
-                new_track.SetNet(track.GetNet()) # set the net of the new track to the net of the original track
-                board.Add(new_track) # add the new track to the board
+                    # Cut the track at the intersection point
+                    track.SetEnd(intersection)
 
-            pcbnew.Refresh() # refresh the board view, this prevents added tracks from being invisible
+                    # Create a new track from the intersection point to the original end point
+                    new_track = pcbnew.PCB_TRACK(track) # copy the original track
+                    new_track.SetStart(intersection)
+                    new_track.SetEnd(track_end)
+                    new_track.SetWidth(track.GetWidth()) # set the width of the new track to the width of the original track
+                    new_track.SetLayer(track.GetLayer()) # set the layer of the new track to the layer of the original track
+                    new_track.SetNet(track.GetNet()) # set the net of the new track to the net of the original track
+                    board.Add(new_track) # add the new track to the board
+                    new_track_list.append(new_track)
+                    cut_count += 1
 
+            selected_tracks.extend(new_track_list) # add the new tracks to the selected tracks list to allow cutting by multiple lines
+
+        pcbnew.Refresh() # refresh the board view, this prevents added tracks from being invisible
+
+        dlg = wx.MessageDialog(None, f'Successfully cut tracks at {cut_count} points.', 'CutTracksAtLine plugin', wx.OK | wx.ICON_INFORMATION)
+        dlg.ShowModal()
+        dlg.Destroy()
